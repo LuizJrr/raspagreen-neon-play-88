@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Zap, RotateCcw } from "lucide-react";
+import { ScratchCard } from "@/components/ScratchCard";
 
 interface GamePrizesProps {
   gameId: string;
@@ -10,6 +12,8 @@ interface GamePrizesProps {
 }
 
 export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: GamePrizesProps) {
+  const [showScratchCard, setShowScratchCard] = useState(false);
+  const [gameResult, setGameResult] = useState<any>(null);
   const prizes = [
     { name: "1000 Reais", value: "R$ 1.000,00", image: "/lovable-uploads/3e406ba9-d423-44f9-9dd3-16e543628cda.png" },
     { name: "700 Reais", value: "R$ 700,00", image: "/lovable-uploads/3e406ba9-d423-44f9-9dd3-16e543628cda.png" },
@@ -29,6 +33,19 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
     { name: "1 Real", value: "R$ 1,00", image: "/lovable-uploads/3e406ba9-d423-44f9-9dd3-16e543628cda.png" },
     { name: "0,50 Centavos", value: "R$ 0,50", image: "/lovable-uploads/3e406ba9-d423-44f9-9dd3-16e543628cda.png" }
   ];
+
+  const handleBuyGame = () => {
+    setShowScratchCard(true);
+  };
+
+  const handleScratchComplete = (prize: any) => {
+    setGameResult(prize);
+    setShowScratchCard(false);
+    // Aqui você pode chamar onPlay() para processar o resultado
+    setTimeout(() => {
+      onPlay();
+    }, 2000);
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -78,10 +95,10 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
 
           <div className="flex space-x-3 mt-4">
             <Button 
-              onClick={onPlay}
+              onClick={handleBuyGame}
               className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2 rounded"
             >
-              Comprar R$ 0,50
+              Comprar R$ {gamePrice.toFixed(2).replace('.', ',')}
             </Button>
             
             <Button 
@@ -138,6 +155,15 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
           <ArrowLeft className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* Scratch Card Modal */}
+      {showScratchCard && (
+        <ScratchCard
+          onClose={() => setShowScratchCard(false)}
+          onRevealComplete={handleScratchComplete}
+          gamePrice={gamePrice}
+        />
+      )}
     </div>
   );
 }
