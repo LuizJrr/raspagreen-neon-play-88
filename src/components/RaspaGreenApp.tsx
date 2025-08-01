@@ -12,6 +12,7 @@ import { Account } from "@/pages/Account";
 import { Referral } from "@/pages/Referral";
 import { History } from "@/pages/History";
 import { Transactions } from "@/pages/Transactions";
+import { GamePrizes } from "@/pages/GamePrizes";
 import { useToast } from "@/hooks/use-toast";
 
 interface User {
@@ -28,6 +29,7 @@ export function RaspaGreenApp() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
+  const [currentGameId, setCurrentGameId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleLogin = (userData: any) => {
@@ -86,6 +88,11 @@ export function RaspaGreenApp() {
     }
   };
 
+  const handleViewGamePrizes = (gameId: string) => {
+    setCurrentGameId(gameId);
+    setCurrentPage('game-prizes');
+  };
+
   const handlePlayGame = (gameId: string) => {
     if (!user) {
       toast({
@@ -97,7 +104,7 @@ export function RaspaGreenApp() {
     }
     
     // Simular jogo
-    const gamePrice = [0.5, 1, 2.5, 5, 20, 100, 500][parseInt(gameId) - 1];
+    const gamePrice = [0.5, 1, 2.5, 5, 50, 300][parseInt(gameId) - 1];
     
     if (user.balance < gamePrice) {
       toast({
@@ -128,6 +135,22 @@ export function RaspaGreenApp() {
         variant: "destructive",
       });
     }
+    
+    // Voltar para home após jogar
+    setCurrentPage('home');
+    setCurrentGameId(null);
+  };
+
+  const getGameData = (gameId: string) => {
+    const gamesData = [
+      { id: '1', title: 'Centavo da Sorte', price: 0.50 },
+      { id: '2', title: 'Sorte Instantânea', price: 1.00 },
+      { id: '3', title: 'Raspadinha Suprema', price: 2.50 },
+      { id: '4', title: 'Raspa Relâmpago', price: 5.00 },
+      { id: '5', title: 'Raspadinha Mágica', price: 50.00 },
+      { id: '6', title: 'Raspa e Ganha', price: 300.00 }
+    ];
+    return gamesData.find(game => game.id === gameId);
   };
 
   const renderCurrentPage = () => {
@@ -135,9 +158,25 @@ export function RaspaGreenApp() {
 
     switch (currentPage) {
       case 'home':
-        return <Home onPlayGame={handlePlayGame} />;
+        return <Home onPlayGame={handleViewGamePrizes} />;
       case 'games':
-        return <Games onPlayGame={handlePlayGame} />;
+        return <Games onPlayGame={handleViewGamePrizes} />;
+      case 'game-prizes':
+        if (currentGameId) {
+          const gameData = getGameData(currentGameId);
+          if (gameData) {
+            return (
+              <GamePrizes
+                gameId={currentGameId}
+                gameTitle={gameData.title}
+                gamePrice={gameData.price}
+                onBack={() => setCurrentPage('home')}
+                onPlay={() => handlePlayGame(currentGameId)}
+              />
+            );
+          }
+        }
+        return <Home onPlayGame={handleViewGamePrizes} />;
       case 'profile':
         return <Profile user={user} onNavigate={setCurrentPage} onLogout={handleLogout} />;
       case 'account':
@@ -149,7 +188,7 @@ export function RaspaGreenApp() {
       case 'transactions':
         return <Transactions />;
       default:
-        return <Home onPlayGame={handlePlayGame} />;
+        return <Home onPlayGame={handleViewGamePrizes} />;
     }
   };
 
@@ -166,7 +205,7 @@ export function RaspaGreenApp() {
       />
       
       <main className="container mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 md:py-8">
-        {user ? renderCurrentPage() : <Home onPlayGame={handlePlayGame} />}
+        {user ? renderCurrentPage() : <Home onPlayGame={handleViewGamePrizes} />}
       </main>
 
       {user && (
