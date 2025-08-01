@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Zap, Play } from "lucide-react";
 
@@ -10,11 +10,118 @@ interface GamePrizesProps {
   onPlay: () => void;
 }
 
+interface ScratchCardProps {
+  symbols: string[];
+  onReveal: (revealed: boolean[]) => void;
+}
+
+function ScratchCard({ symbols, onReveal }: ScratchCardProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isScratching, setIsScratching] = useState(false);
+  const [revealed, setRevealed] = useState<boolean[]>(new Array(9).fill(false));
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Desenha o fundo com os símbolos
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Desenha os símbolos
+    ctx.font = '32px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    symbols.forEach((symbol, index) => {
+      const row = Math.floor(index / 3);
+      const col = index % 3;
+      const x = col * 100 + 50;
+      const y = row * 100 + 50;
+      
+      if (revealed[index]) {
+        ctx.fillStyle = '#22c55e';
+        ctx.fillRect(col * 100 + 5, row * 100 + 5, 90, 90);
+        ctx.fillStyle = '#000';
+        ctx.fillText(symbol, x, y);
+      } else {
+        // Camada de raspagem
+        ctx.fillStyle = '#6b7280';
+        ctx.fillRect(col * 100 + 5, row * 100 + 5, 90, 90);
+        ctx.fillStyle = '#9ca3af';
+        ctx.font = '12px Arial';
+        ctx.fillText('RASPE', x, y);
+      }
+    });
+  }, [symbols, revealed]);
+
+  const handleScratch = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const col = Math.floor(x / 100);
+    const row = Math.floor(y / 100);
+    const index = row * 3 + col;
+
+    if (index >= 0 && index < 9 && !revealed[index]) {
+      const newRevealed = [...revealed];
+      newRevealed[index] = true;
+      setRevealed(newRevealed);
+      onReveal(newRevealed);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-4">
+      <h3 className="text-lg font-bold text-white">Raspe para revelar os símbolos!</h3>
+      <canvas
+        ref={canvasRef}
+        width={300}
+        height={300}
+        className="border border-gray-600 rounded cursor-pointer"
+        onClick={handleScratch}
+        onMouseMove={(e) => isScratching && handleScratch(e)}
+        onMouseDown={() => setIsScratching(true)}
+        onMouseUp={() => setIsScratching(false)}
+        onMouseLeave={() => setIsScratching(false)}
+      />
+      <p className="text-sm text-gray-300">Clique nos quadrados para raspar</p>
+    </div>
+  );
+}
+
 export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: GamePrizesProps) {
   const [canPurchase, setCanPurchase] = useState(true);
+  const [showScratchCard, setShowScratchCard] = useState(false);
+  const [gameSymbols] = useState(['💎', '🍀', '💰', '🎁', '⭐', '💎', '🔥', '🍀', '💰']);
 
   const handleBuyGame = () => {
     setCanPurchase(false);
+    setShowScratchCard(true);
+  };
+
+  const handleReveal = (revealed: boolean[]) => {
+    // Verifica se existem 3 símbolos iguais revelados
+    const revealedSymbols = gameSymbols.filter((_, index) => revealed[index]);
+    const symbolCounts = revealedSymbols.reduce((acc, symbol) => {
+      acc[symbol] = (acc[symbol] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const hasWon = Object.values(symbolCounts).some(count => count >= 3);
+    if (hasWon && revealed.filter(Boolean).length >= 3) {
+      setTimeout(() => {
+        alert('Parabéns! Você ganhou!');
+      }, 500);
+    }
   };
 
   const prizes = [
@@ -138,34 +245,50 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
           </div>
         </div>
 
-        {/* Seção de Prêmios */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Prêmios da Raspadinha:</h2>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-            {prizes.map((prize, index) => (
-              <div 
-                key={index}
-                className="bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-green-400 transition-all"
-              >
-                {/* Placeholder para imagem */}
-                <div className="w-full h-20 bg-gray-700 rounded mb-2 flex items-center justify-center">
-                  <span className="text-gray-500 text-xs">IMG</span>
-                </div>
-                
-                {/* Nome do prêmio */}
-                <h3 className="text-white text-sm font-medium text-center mb-1">
-                  {prize.name}
-                </h3>
-                
-                {/* Valor do prêmio */}
-                <div className="bg-green-600 text-black text-xs font-bold text-center py-1 px-2 rounded">
-                  {prize.value}
-                </div>
+        {/* Interface da Raspadinha */}
+        {showScratchCard ? (
+          <div className="mt-8 flex justify-center">
+            <div className="bg-gray-800 rounded-lg p-8 border border-gray-700">
+              <ScratchCard symbols={gameSymbols} onReveal={handleReveal} />
+              <div className="flex justify-center mt-6">
+                <Button 
+                  onClick={() => setShowScratchCard(false)}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Voltar
+                </Button>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-white mb-6">Prêmios da Raspadinha:</h2>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+              {prizes.map((prize, index) => (
+                <div 
+                  key={index}
+                  className="bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-green-400 transition-all"
+                >
+                  {/* Placeholder para imagem */}
+                  <div className="w-full h-20 bg-gray-700 rounded mb-2 flex items-center justify-center">
+                    <span className="text-gray-500 text-xs">IMG</span>
+                  </div>
+                  
+                  {/* Nome do prêmio */}
+                  <h3 className="text-white text-sm font-medium text-center mb-1">
+                    {prize.name}
+                  </h3>
+                  
+                  {/* Valor do prêmio */}
+                  <div className="bg-green-600 text-black text-xs font-bold text-center py-1 px-2 rounded">
+                    {prize.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Back Button */}
