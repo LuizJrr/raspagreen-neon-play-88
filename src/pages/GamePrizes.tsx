@@ -18,26 +18,6 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
   const [prize, setPrize] = useState<any>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const prizes = [
-    { name: "1000 Reais", value: "R$ 1.000,00" },
-    { name: "700 Reais", value: "R$ 700,00" },
-    { name: "500 Reais", value: "R$ 500,00" },
-    { name: "200 Reais", value: "R$ 200,00" },
-    { name: "Smartwatch D20", value: "R$ 150,00" },
-    { name: "100 Reais", value: "R$ 100,00" },
-    { name: "PowerBank", value: "R$ 60,00" },
-    { name: "50 Reais", value: "R$ 50,00" },
-    { name: "20 Reais", value: "R$ 20,00" },
-    { name: "15 Reais", value: "R$ 15,00" },
-    { name: "10 Reais", value: "R$ 10,00" },
-    { name: "5 Reais", value: "R$ 5,00" },
-    { name: "4 Reais", value: "R$ 4,00" },
-    { name: "3 Reais", value: "R$ 3,00" },
-    { name: "2 Reais", value: "R$ 2,00" },
-    { name: "1 Real", value: "R$ 1,00" },
-    { name: "0,50 Centavos", value: "R$ 0,50" }
-  ];
-
   // Gerar prêmio quando componente monta
   useEffect(() => {
     const gamePrizes = [
@@ -140,10 +120,8 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
   };
 
   const handleBuyGame = () => {
-    console.log("Botão Comprar clicado!");
     setCanPurchase(false);
     setCanScratch(true);
-    console.log("Raspagem habilitada!");
   };
 
   const getMousePos = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -226,56 +204,88 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Game Info Section */}
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🎲</span>
+        {/* Layout de duas colunas igual à imagem */}
+        <div className="flex space-x-6">
+          {/* Coluna esquerda - Compra */}
+          <div className="w-80 bg-gray-800/50 rounded-lg p-6">
+            <div className="flex flex-col items-center space-y-4">
+              {/* Círculo branco com ícone */}
+              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+                <span className="text-4xl">🎲</span>
+              </div>
+              
+              {/* Texto e botão */}
+              <div className="text-center space-y-4">
+                <p className="text-white font-medium">Comprar por R$ {gamePrice.toFixed(2).replace('.', ',')}</p>
+                
+                <Button 
+                  onClick={handleBuyGame}
+                  disabled={!canPurchase}
+                  className={`w-full font-bold px-6 py-2 rounded ${
+                    canPurchase 
+                      ? 'bg-green-600 hover:bg-green-700 text-black' 
+                      : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                  }`}
+                >
+                  {canPurchase ? `Comprar R$ ${gamePrice.toFixed(2).replace('.', ',')}` : 'Comprado'}
+                </Button>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-bold">Centavo da Sorte</h2>
-              <p className="text-sm text-gray-400">Comprar por R$ {gamePrice.toFixed(2).replace('.', ',')}</p>
+          </div>
+
+          {/* Coluna direita - Informações do jogo */}
+          <div className="flex-1 bg-gray-800 rounded-lg p-6 border border-gray-700">
+            {/* Header do jogo */}
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-yellow-500 rounded flex items-center justify-center">
+                <span className="text-lg">🎯</span>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Centavo da Sorte</h2>
             </div>
-          </div>
 
-          <div className="space-y-2 text-sm text-gray-300 mb-4">
-            <p>Pressione <span className="bg-gray-700 px-1 rounded">ctrl</span> + <span className="bg-gray-700 px-1 rounded">s</span> para comprar.</p>
-            <p>Pressione <span className="bg-gray-700 px-1 rounded">ctrl</span> + <span className="bg-gray-700 px-1 rounded">s</span> para revelar.</p>
-            <p>Pressione <span className="bg-gray-700 px-1 rounded">ctrl</span> + <span className="bg-gray-700 px-1 rounded">s</span> para revelar rápido.</p>
-          </div>
+            {/* Instruções de teclado */}
+            <div className="space-y-2 text-sm text-gray-300 mb-6">
+              <p>Pressione <span className="bg-gray-700 px-2 py-1 rounded text-green-400">ctrl</span> + <span className="bg-gray-700 px-2 py-1 rounded text-green-400">s</span> para comprar.</p>
+              <p>Pressione <span className="bg-gray-700 px-2 py-1 rounded text-green-400">ctrl</span> + <span className="bg-gray-700 px-2 py-1 rounded text-green-400">s</span> para revelar.</p>
+              <p>Pressione <span className="bg-gray-700 px-2 py-1 rounded text-green-400">ctrl</span> + <span className="bg-gray-700 px-2 py-1 rounded text-green-400">s</span> para revelar rápido.</p>
+            </div>
 
-          <div className="flex items-center space-x-2 mb-4">
-            <Zap className="w-4 h-4 text-green-400" />
-            <span className="text-sm font-medium text-green-400">
-              Ache 3 imagens iguais e conquiste seu prêmio!
-            </span>
-          </div>
+            {/* Texto principal com ícone */}
+            <div className="flex items-center space-x-3 mb-6">
+              <Zap className="w-5 h-5 text-green-400" />
+              <span className="text-lg font-semibold text-green-400">
+                Ache 3 imagens iguais e conquiste seu prêmio!
+              </span>
+            </div>
 
-          <div className="text-xs text-gray-400 space-y-1">
-            <p>O valor correspondente será creditado automaticamente na sua conta.</p>
-            <p>Se preferir receber o produto físico, basta entrar em contato com o nosso suporte.</p>
-          </div>
+            {/* Texto explicativo */}
+            <div className="text-sm text-gray-400 space-y-2 mb-6">
+              <p>O valor correspondente será creditado automaticamente na sua conta.</p>
+              <p>Se preferir receber o produto físico, basta entrar em contato com o nosso suporte.</p>
+            </div>
 
-          <div className="flex space-x-3 mt-4">
-            <Button 
-              onClick={handleBuyGame}
-              disabled={!canPurchase}
-              className={`font-bold px-6 py-2 rounded ${
-                canPurchase 
-                  ? 'bg-green-600 hover:bg-green-700 text-white' 
-                  : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-              }`}
-            >
-              {canPurchase ? `Comprar R$ ${gamePrice.toFixed(2).replace('.', ',')}` : 'Comprado'}
-            </Button>
-            
-            <Button 
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
-            >
-              <Zap className="w-4 h-4" />
-              <span>Rodada Automática</span>
-            </Button>
+            {/* Botões inferiores */}
+            <div className="flex space-x-4">
+              <Button 
+                onClick={handleBuyGame}
+                disabled={!canPurchase}
+                className={`font-bold px-6 py-2 rounded ${
+                  canPurchase 
+                    ? 'bg-green-600 hover:bg-green-700 text-black' 
+                    : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                }`}
+              >
+                {canPurchase ? `Comprar R$ ${gamePrice.toFixed(2).replace('.', ',')}` : 'Comprado'}
+              </Button>
+              
+              <Button 
+                variant="outline"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
+              >
+                <Zap className="w-4 h-4" />
+                <span>Rodada Automática</span>
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -319,39 +329,6 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
                 Clique em "Comprar" para habilitar a raspagem
               </p>
             )}
-          </div>
-        </div>
-
-        {/* Prizes Section */}
-        <div>
-          <h3 className="text-xl font-bold mb-4 text-white">Prêmios da Raspadinha:</h3>
-          
-          <div className="grid grid-cols-4 gap-3">
-            {prizes.map((prize, index) => (
-              <div 
-                key={index}
-                className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-center hover:border-gray-500 transition-colors"
-              >
-                <div className="w-full h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded mb-2 flex items-center justify-center overflow-hidden">
-                  {prize.name.includes("Smartwatch") ? (
-                    <div className="w-8 h-8 bg-black rounded border border-gray-400"></div>
-                  ) : prize.name.includes("PowerBank") ? (
-                    <div className="w-10 h-6 bg-gray-300 rounded"></div>
-                  ) : prize.name.includes("Centavos") ? (
-                    <div className="w-8 h-8 bg-yellow-600 rounded-full border-2 border-yellow-400"></div>
-                  ) : (
-                    <div className="w-12 h-8 bg-green-200 border border-green-400 rounded flex items-center justify-center">
-                      <span className="text-green-800 font-bold text-xs">R$</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-1">
-                  <p className="font-bold text-xs text-white">{prize.name}</p>
-                  <p className="text-xs font-semibold text-green-400">{prize.value}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
