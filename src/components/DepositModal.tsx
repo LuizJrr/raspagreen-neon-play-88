@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -51,6 +51,10 @@ export function DepositModal({ open, onClose, onDeposit }: DepositModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="bg-background border-border p-0 max-w-sm mx-auto">
+        <DialogTitle className="sr-only">Depositar</DialogTitle>
+        <DialogDescription className="sr-only">
+          Faça um depósito via PIX. Valor mínimo de R$ 10,00.
+        </DialogDescription>
         {/* Header */}
         <div className="relative">
           {/* Banner promocional */}

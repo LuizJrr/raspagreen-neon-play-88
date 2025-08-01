@@ -56,15 +56,19 @@ export function RaspaGreenApp() {
   };
 
   const handleDeposit = (amount?: number) => {
+    if (!user) {
+      // Se não há usuário logado, abrir modal de login
+      setShowLoginModal(true);
+      return;
+    }
+
     if (amount) {
       // Processar depósito com valor específico
-      if (user) {
-        setUser(prev => prev ? { ...prev, balance: prev.balance + amount } : null);
-        toast({
-          title: "Depósito realizado!",
-          description: `R$ ${Number(amount).toFixed(2).replace('.', ',')} foram adicionados ao seu saldo`,
-        });
-      }
+      setUser(prev => prev ? { ...prev, balance: prev.balance + amount } : null);
+      toast({
+        title: "Depósito realizado!",
+        description: `R$ ${Number(amount).toFixed(2).replace('.', ',')} foram adicionados ao seu saldo`,
+      });
     } else {
       // Abrir modal de depósito
       setShowDepositModal(true);
@@ -153,7 +157,7 @@ export function RaspaGreenApp() {
         onLogin={handleShowLogin}
         onRegister={handleShowRegister}
         onLogout={handleLogout}
-        onDeposit={user ? handleDeposit : undefined}
+        onDeposit={handleDeposit}
         onWithdraw={user ? () => setShowWithdrawModal(true) : undefined}
         onNavigate={setCurrentPage}
       />
