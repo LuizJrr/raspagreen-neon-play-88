@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Copy, Eye, Users, Star, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Copy, Eye, Users, Star, TrendingUp, Link2, CheckCircle, UserPlus, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ReferralProps {
@@ -22,6 +24,19 @@ export function Referral({ user }: ReferralProps) {
   const maxXP = 1000;
   const commission = 1;
   const referralLink = `https://raspagreen.com/r/${referralCode}`;
+
+  // Mock data dos resultados do afiliado
+  const referralResults = {
+    totalReferrals: 5,
+    totalDeposits: 3,
+    users: [
+      { email: "joao@***", status: "Depositou", joinedAt: "2024-01-15" },
+      { email: "maria@***", status: "Apenas cadastrado", joinedAt: "2024-01-14" },
+      { email: "carlos@***", status: "Depositou", joinedAt: "2024-01-13" },
+      { email: "ana@***", status: "Depositou", joinedAt: "2024-01-12" },
+      { email: "pedro@***", status: "Apenas cadastrado", joinedAt: "2024-01-11" }
+    ]
+  };
 
   const copyReferralLink = () => {
     navigator.clipboard.writeText(referralLink);
@@ -83,50 +98,109 @@ export function Referral({ user }: ReferralProps) {
         Ver níveis
       </Button>
 
-      {/* Link de referência */}
-      <Card className="card-dark">
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold text-foreground">Link de referência</h3>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium text-foreground">Seu Código</label>
-                <div className="flex space-x-2 mt-1">
-                  <div className="flex-1 bg-muted/20 p-3 rounded-lg border border-border">
-                    <span className="font-mono text-primary font-semibold">{referralCode}</span>
-                  </div>
-                  <Button
-                    onClick={generateNewCode}
-                    className="btn-neon"
-                  >
-                    Gerar Código
-                  </Button>
-                </div>
+      {/* Link de Afiliado */}
+      <Card className="card-dark border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Link2 className="w-5 h-5 text-primary" />
+            <span>Link de Afiliado</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="w-4 h-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Compartilhe com seus amigos. Quando se cadastrarem e depositarem, você ganha comissão!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-foreground">Seu Código</label>
+            <div className="flex space-x-2 mt-1">
+              <div className="flex-1 bg-muted/20 p-3 rounded-lg border border-border">
+                <span className="font-mono text-primary font-semibold text-lg">{referralCode}</span>
               </div>
-
-              <div>
-                <label className="text-sm font-medium text-foreground">Link completo</label>
-                <div className="flex space-x-2 mt-1">
-                  <div className="flex-1 bg-muted/20 p-3 rounded-lg border border-border overflow-hidden">
-                    <span className="text-sm text-muted-foreground truncate block">
-                      {referralLink}
-                    </span>
-                  </div>
-                  <Button
-                    onClick={copyReferralLink}
-                    variant="outline"
-                    className="border-primary/30 text-primary hover:bg-primary/10"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
+              <Button
+                onClick={generateNewCode}
+                className="btn-neon"
+              >
+                Gerar Novo
+              </Button>
             </div>
           </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground">Link Completo</label>
+            <div className="flex space-x-2 mt-1">
+              <div className="flex-1 bg-muted/20 p-3 rounded-lg border border-border overflow-hidden">
+                <span className="text-sm text-muted-foreground truncate block">
+                  {referralLink}
+                </span>
+              </div>
+              <Button
+                onClick={copyReferralLink}
+                className="btn-neon px-4"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copiar
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Resultados do Afiliado */}
+      <Card className="card-dark border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-primary" />
+            <span>Seus Resultados</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-muted/20 p-4 rounded-lg text-center border border-primary/20">
+              <div className="text-2xl font-bold text-primary">{referralResults.totalReferrals}</div>
+              <div className="text-sm text-muted-foreground">Cadastros via Link</div>
+            </div>
+            
+            <div className="bg-muted/20 p-4 rounded-lg text-center border border-primary/20">
+              <div className="text-2xl font-bold text-primary">{referralResults.totalDeposits}</div>
+              <div className="text-sm text-muted-foreground">Depositaram</div>
+            </div>
+          </div>
+
+          {referralResults.users.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-medium text-foreground">Usuários que usaram seu link:</h4>
+              <div className="space-y-2">
+                {referralResults.users.map((user, index) => (
+                  <div key={index} className="flex items-center justify-between bg-muted/10 p-3 rounded-lg border border-border">
+                    <div className="flex items-center space-x-3">
+                      <div className="text-sm font-medium text-foreground">{user.email}</div>
+                      <Badge 
+                        variant={user.status === "Depositou" ? "default" : "secondary"}
+                        className={user.status === "Depositou" ? "bg-primary/20 text-primary" : ""}
+                      >
+                        {user.status === "Depositou" ? (
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                        ) : (
+                          <UserPlus className="w-3 h-3 mr-1" />
+                        )}
+                        {user.status}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(user.joinedAt).toLocaleDateString("pt-BR")}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -166,22 +240,44 @@ export function Referral({ user }: ReferralProps) {
         </Card>
       )}
 
-      {/* Como funciona */}
-      <Card className="card-dark">
-        <CardContent className="p-6">
-          <h3 className="font-semibold text-foreground mb-4">Como funciona o programa</h3>
-          <div className="space-y-3 text-sm text-muted-foreground">
-            <div className="flex items-start space-x-2">
-              <span className="text-primary font-bold">1.</span>
-              <span>Compartilhe seu link de referência com amigos</span>
+      {/* Como Funciona o Programa */}
+      <Card className="card-dark border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Users className="w-5 h-5 text-primary" />
+            <span>Como Funciona o Programa</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4 p-4 bg-muted/10 rounded-lg border border-primary/20">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <span className="text-primary font-bold">1</span>
+              </div>
+              <div>
+                <div className="font-medium text-foreground">Compartilhe seu link</div>
+                <div className="text-sm text-muted-foreground">Envie seu link de referência para amigos e familiares</div>
+              </div>
             </div>
-            <div className="flex items-start space-x-2">
-              <span className="text-primary font-bold">2.</span>
-              <span>Quando eles se cadastrarem e jogarem, você ganha comissão</span>
+
+            <div className="flex items-center space-x-4 p-4 bg-muted/10 rounded-lg border border-primary/20">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <span className="text-primary font-bold">2</span>
+              </div>
+              <div>
+                <div className="font-medium text-foreground">Eles se cadastram e jogam</div>
+                <div className="text-sm text-muted-foreground">Quando depositarem e jogarem, você ganha comissão automaticamente</div>
+              </div>
             </div>
-            <div className="flex items-start space-x-2">
-              <span className="text-primary font-bold">3.</span>
-              <span>Quanto mais XP, maior seu nível e comissão</span>
+
+            <div className="flex items-center space-x-4 p-4 bg-muted/10 rounded-lg border border-primary/20">
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <span className="text-primary font-bold">3</span>
+              </div>
+              <div>
+                <div className="font-medium text-foreground">Evolua seu nível</div>
+                <div className="text-sm text-muted-foreground">Quanto mais XP, maior seu nível e taxa de comissão</div>
+              </div>
             </div>
           </div>
         </CardContent>
