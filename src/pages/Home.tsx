@@ -19,7 +19,8 @@ interface HomeProps {
 const gamesData = [
   {
     id: '1',
-    title: 'PIX NA HORA!',
+    title: 'Centavo da Sorte',
+    subtitle: 'PIX NA HORA!',
     image: game1,
     price: 0.50,
     maxPrize: 1000000,
@@ -27,44 +28,42 @@ const gamesData = [
   {
     id: '2', 
     title: 'Sorte Instantânea',
+    subtitle: 'ACHE 3 IGUAIS E GANHE NA HORA',
     image: game2,
     price: 1.00,
     maxPrize: 2500000,
   },
   {
     id: '3',
-    title: 'Raspadinha Suprema',
-    image: game3, 
+    title: 'Raspadinha Suprema', 
+    subtitle: 'ACHE 3 IGUAIS E GANHE NA HORA',
+    image: game3,
     price: 2.50,
     maxPrize: 5000000,
   },
   {
     id: '4',
     title: 'Raspa Relâmpago',
+    subtitle: 'ACHE 3 IGUAIS E GANHE NA HORA',
     image: game4,
     price: 5.00,
-    maxPrize: 10000000,
+    maxPrize: 15000000,
   },
   {
     id: '5',
     title: 'Raspadinha Mágica',
+    subtitle: 'ACHE 3 IGUAIS E GANHE NA HORA',
     image: game5,
-    price: 20.00,
+    price: 50.00,
     maxPrize: 30000000,
   },
   {
     id: '6',
     title: 'Raspa e Ganha',
+    subtitle: 'ACHE 3 IGUAIS E GANHE NA HORA',
     image: game6,
-    price: 100.00,
-    maxPrize: 50000000,
-  },
-  {
-    id: '7',
-    title: 'Raspadinha Ômega',
-    image: game7,
-    price: 500.00,
-    maxPrize: 175000000,
+    price: 300.00,
+    maxPrize: 60000000,
   }
 ];
 
@@ -102,12 +101,13 @@ export function Home({ onPlayGame }: HomeProps) {
           <h2 className="text-lg font-bold text-foreground">Raspadinhas Disponíveis</h2>
         </div>
         
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredGames.map((game) => (
             <GameCard
               key={game.id}
               id={game.id}
               title={game.title}
+              subtitle={game.subtitle}
               image={game.image}
               price={game.price}
               maxPrize={game.maxPrize}

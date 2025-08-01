@@ -5,6 +5,7 @@ import { Eye, Play } from "lucide-react";
 interface GameCardProps {
   id: string;
   title: string;
+  subtitle?: string;
   image: string;
   price: number;
   maxPrize: number;
@@ -12,48 +13,58 @@ interface GameCardProps {
   onViewPrizes: () => void;
 }
 
-export function GameCard({ title, image, price, maxPrize, onPlay, onViewPrizes }: GameCardProps) {
+export function GameCard({ title, subtitle, image, price, maxPrize, onPlay, onViewPrizes }: GameCardProps) {
   return (
-    <div className="card-dark hover:border-primary/30 transition-all duration-300 group">
-      {/* Imagem do jogo */}
-      <div className="relative overflow-hidden rounded-lg mb-3">
+    <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 hover:border-primary/50 transition-all duration-300 group">
+      {/* Imagem de fundo */}
+      <div className="relative h-40 overflow-hidden">
         <img 
           src={image} 
           alt={title}
-          className="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         
-        {/* Badge de prêmio */}
-        <Badge className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-primary text-primary-foreground font-semibold text-xs">
-          ATÉ R$ {maxPrize.toLocaleString('pt-BR')}
-        </Badge>
+        {/* Overlay gradiente */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        
+        {/* Subtitle no topo */}
+        {subtitle && (
+          <div className="absolute top-4 left-4 right-4">
+            <h3 className="text-white font-black text-xl leading-tight drop-shadow-lg">
+              {subtitle}
+            </h3>
+          </div>
+        )}
       </div>
 
-      {/* Conteúdo */}
-      <div className="space-y-2 sm:space-y-3">
-        <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-2">{title}</h3>
+      {/* Conteúdo na parte inferior */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 space-y-3">
+        {/* Título do jogo */}
+        <h4 className="text-white font-semibold text-sm">{title}</h4>
         
-        <div className="text-xs sm:text-sm text-muted-foreground">
+        {/* Valor do prêmio */}
+        <div className="text-yellow-400 font-bold text-xs">
           PRÊMIOS DE ATÉ R$ {maxPrize.toLocaleString('pt-BR')}
         </div>
 
-        {/* Ações */}
+        {/* Botões */}
         <div className="flex space-x-2">
-          <Button onClick={onPlay} className="btn-neon flex-1 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">
-            <Play className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-            <span className="hidden sm:inline">Jogar</span>
-            <span className="font-bold">R$ {price.toFixed(2).replace('.', ',')}</span>
-          </Button>
-          
-          <Button 
-            onClick={onViewPrizes} 
-            variant="outline" 
-            size="sm"
-            className="border-border hover:border-primary/50 px-2 sm:px-3"
+          <button
+            onClick={onPlay}
+            className="flex-1 bg-primary hover:bg-primary/90 text-black font-bold py-2 px-4 rounded-md text-sm transition-colors duration-200 flex items-center justify-center space-x-2"
           >
-            <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-          </Button>
+            <span>Jogar</span>
+            <span className="bg-black/20 px-2 py-1 rounded text-xs">
+              R$ {price.toFixed(2).replace('.', ',')}
+            </span>
+          </button>
+          
+          <button
+            onClick={onViewPrizes}
+            className="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-3 rounded-md text-xs transition-colors duration-200 border border-white/20"
+          >
+            VER PRÊMIOS
+          </button>
         </div>
       </div>
     </div>
