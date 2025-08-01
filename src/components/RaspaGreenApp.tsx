@@ -8,6 +8,7 @@ import { DepositModal } from "@/components/DepositModal";
 import { Home } from "@/pages/Home";
 import { Games } from "@/pages/Games";
 import { Profile } from "@/pages/Profile";
+import { Account } from "@/pages/Account";
 import { Referral } from "@/pages/Referral";
 import { History } from "@/pages/History";
 import { Transactions } from "@/pages/Transactions";
@@ -139,6 +140,8 @@ export function RaspaGreenApp() {
         return <Games onPlayGame={handlePlayGame} />;
       case 'profile':
         return <Profile user={user} onNavigate={setCurrentPage} onLogout={handleLogout} />;
+      case 'account':
+        return <Account user={user} onNavigate={setCurrentPage} />;
       case 'referral':
         return <Referral user={user} />;
       case 'history':

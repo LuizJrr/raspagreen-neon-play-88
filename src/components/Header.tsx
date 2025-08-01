@@ -77,7 +77,7 @@ export function Header({ user, onLogin, onRegister, onLogout, onDeposit, onWithd
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-card border-border z-50">
-                  <DropdownMenuItem onClick={() => onNavigate('profile')} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => onNavigate('account')} className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Conta
                   </DropdownMenuItem>
