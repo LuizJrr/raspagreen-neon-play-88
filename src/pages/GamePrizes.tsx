@@ -289,9 +289,27 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
           </div>
         </div>
 
-        {/* Scratch Card - Always Visible */}
+        {/* Grid Section com Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 p-4">
+          {Array.from({ length: 12 }, (_, index) => (
+            <div 
+              key={index}
+              className="w-size-33 size-24 flex items-center justify-center rounded-lg shadow group border-2 border-metal-foreground/20 bg-gray-800 hover:border-green-400 transition-all"
+            >
+              <div className="sc_container absolute inset-0 rounded-lg overflow-hidden">
+                <canvas 
+                  className="sc_canvas w-full h-full" 
+                  width="432" 
+                  height="433"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Scratch Card Principal - Always Visible */}
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <h3 className="text-lg font-bold mb-4 text-white">Quadro de Raspagem:</h3>
+          <h3 className="text-lg font-bold mb-4 text-white">Quadro de Raspagem Principal:</h3>
           
           <div className="flex flex-col items-center space-y-4">
             <canvas
