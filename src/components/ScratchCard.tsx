@@ -9,6 +9,7 @@ interface ScratchCardProps {
 }
 
 export function ScratchCard({ onClose, onRevealComplete, gamePrice }: ScratchCardProps) {
+  console.log("ScratchCard renderizado!", { gamePrice });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScratching, setIsScratching] = useState(false);
   const [scratchedPercentage, setScratchedPercentage] = useState(0);

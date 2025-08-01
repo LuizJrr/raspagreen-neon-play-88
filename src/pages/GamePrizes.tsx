@@ -14,6 +14,8 @@ interface GamePrizesProps {
 export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: GamePrizesProps) {
   const [showScratchCard, setShowScratchCard] = useState(false);
   const [gameResult, setGameResult] = useState<any>(null);
+  
+  console.log("GamePrizes render - showScratchCard:", showScratchCard);
   const prizes = [
     { name: "1000 Reais", value: "R$ 1.000,00", image: "/lovable-uploads/3e406ba9-d423-44f9-9dd3-16e543628cda.png" },
     { name: "700 Reais", value: "R$ 700,00", image: "/lovable-uploads/3e406ba9-d423-44f9-9dd3-16e543628cda.png" },
@@ -35,7 +37,9 @@ export function GamePrizes({ gameId, gameTitle, gamePrice, onBack, onPlay }: Gam
   ];
 
   const handleBuyGame = () => {
+    console.log("Botão Comprar clicado!");
     setShowScratchCard(true);
+    console.log("showScratchCard definido como true");
   };
 
   const handleScratchComplete = (prize: any) => {
